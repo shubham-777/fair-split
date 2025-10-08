@@ -12,7 +12,11 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     
     # Database
-    DATABASE_URL: str
+    DB_USERNAME: str = 'postgres'
+    DB_PASSWORD: str = 'shub777ham'
+    DB_HOST: str = 'localhost'
+    DB_PORT: int = 5432
+    DB_NAME: str = 'fair_split'
     
     # JWT
     SECRET_KEY: str

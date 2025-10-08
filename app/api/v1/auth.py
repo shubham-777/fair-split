@@ -4,6 +4,7 @@ Authentication API routes
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from app.database import get_db
+from app.dependencies import SessionDep
 from app.models.user import User
 from app.schemas.user import UserCreate, UserLogin, UserResponse, Token
 from app.utils.security import hash_password, verify_password, create_access_token, create_refresh_token
@@ -13,7 +14,7 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
 @router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def signup(user_data: UserCreate, db: Session = Depends(get_db)):
+async def signup(user_data: UserCreate, db: Session = SessionDep):
     """
     Register a new user
     """
