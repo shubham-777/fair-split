@@ -1,20 +1,18 @@
 """
 Authentication API routes
 """
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-from app.database import get_db
+from fastapi import APIRouter, HTTPException, status
+
 from app.dependencies import SessionDep
 from app.models.user import User
-from app.schemas.user import UserCreate, UserLogin, UserResponse, Token
-from app.utils.security import hash_password, verify_password, create_access_token, create_refresh_token
-
+from app.schemas.users import Token, UserCreate, UserLogin, ReadUser
+from app.utils.security import create_access_token, create_refresh_token, hash_password, verify_password
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 
-@router.post("/signup", response_model=UserResponse, status_code=status.HTTP_201_CREATED)
-async def signup(user_data: UserCreate, db: Session = SessionDep):
+@router.post("/signup", response_model=ReadUser, status_code=status.HTTP_201_CREATED)
+async def signup(user_data: UserCreate, db: SessionDep):
     """
     Register a new user
     """
@@ -50,7 +48,7 @@ async def signup(user_data: UserCreate, db: Session = SessionDep):
 
 
 @router.post("/login", response_model=Token)
-async def login(credentials: UserLogin, db: Session = Depends(get_db)):
+async def login(credentials: UserLogin, db: SessionDep):
     """
     Authenticate user and return JWT tokens
     """
@@ -71,8 +69,8 @@ async def login(credentials: UserLogin, db: Session = Depends(get_db)):
         )
     
     # Create tokens
-    access_token = create_access_token(data={"sub": user.id})
-    refresh_token = create_refresh_token(data={"sub": user.id})
+    access_token = create_access_token(data={"email": user.email})
+    refresh_token = create_refresh_token(data={"email": user.email})
     
     return {
         "access_token": access_token,
@@ -82,13 +80,20 @@ async def login(credentials: UserLogin, db: Session = Depends(get_db)):
 
 
 @router.post("/refresh", response_model=Token)
-async def refresh_token(refresh_token: str, db: Session = Depends(get_db)):
+async def refresh_token(refresh_token: str, db: SessionDep):
     """
     Refresh access token using refresh token
     """
     from app.utils.security import decode_token
-    
-    payload = decode_token(refresh_token)
+    try:
+        payload = decode_token(refresh_token)
+    except Exception:
+        raise HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+        
     if not payload or payload.get("type") != "refresh":
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

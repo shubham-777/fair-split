@@ -1,11 +1,18 @@
 """
 Application configuration using Pydantic Settings
 """
-from pydantic_settings import BaseSettings
+import os
 from typing import Optional
 
+from pydantic import computed_field, PostgresDsn
+from pydantic_settings import BaseSettings
 
 class Settings(BaseSettings):
+    class Config:
+        base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        env_file = os.path.join(base_dir, ".env")
+        case_sensitive = True
+    
     # App
     APP_NAME: str = "FairSplit API"
     VERSION: str = "1.0.0"
@@ -17,6 +24,11 @@ class Settings(BaseSettings):
     DB_HOST: str = 'localhost'
     DB_PORT: int = 5432
     DB_NAME: str = 'fair_split'
+    
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def SQLALCHEMY_DATABASE_URI(self) -> PostgresDsn:
+        return f'postgresql+psycopg2://{settings.DB_USERNAME}:{settings.DB_PASSWORD}@{settings.DB_HOST}:{settings.DB_PORT}/{settings.DB_NAME}'
     
     # JWT
     SECRET_KEY: str
@@ -35,10 +47,6 @@ class Settings(BaseSettings):
     # Pagination
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 100
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 
 settings = Settings()

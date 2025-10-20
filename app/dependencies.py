@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, TypeAlias
 
 from fastapi import Depends
 from sqlalchemy.orm import Session
@@ -11,4 +11,4 @@ def get_session():
         yield session
         
     
-SessionDep = Annotated[Session, Depends(get_session)]
+SessionDep: TypeAlias = Annotated[Session, Depends(get_session)]

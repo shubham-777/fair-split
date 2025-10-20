@@ -1,9 +1,11 @@
 """
 User Pydantic schemas
 """
-from pydantic import BaseModel, EmailStr, Field
+from pydantic import BaseModel, EmailStr, Field, field_serializer
 from typing import Optional
 from datetime import datetime
+
+from app.utils.constants import COMMON_DATE_TIME_FORMAT
 
 
 class UserBase(BaseModel):
@@ -26,15 +28,22 @@ class UserUpdate(BaseModel):
     avatar_url: Optional[str] = None
 
 
-class UserResponse(UserBase):
+class ReadUser(UserBase):
     id: int
     avatar_url: Optional[str]
     is_active: bool
     is_verified: bool
-    created_at: datetime
+    created_at: datetime = Field(..., example="2025-10-20 09:30:00",
+                                 description=f"Datetime in format {COMMON_DATE_TIME_FORMAT}")
     
     class Config:
         from_attributes = True
+    
+    @field_serializer("created_at")
+    def serialize_created_at(self, dt: datetime, _info):
+        if not dt:
+            return dt
+        return dt.strftime(COMMON_DATE_TIME_FORMAT)
 
 
 class Token(BaseModel):
