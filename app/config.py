@@ -35,6 +35,7 @@ class Settings(BaseSettings):
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+    RESET_TOKEN_EXPIRE_MINUTES: int = 10
     
     # CORS
     ALLOWED_ORIGINS: list[str] = ["*"]
@@ -47,6 +48,22 @@ class Settings(BaseSettings):
     # Pagination
     DEFAULT_PAGE_SIZE: int = 20
     MAX_PAGE_SIZE: int = 100
+    
+    #SMTP
+    DEFAULT_SENDER_EMAIL: str = "notification@fairsplit.com"
+    SMTP_HOST: str = "localhost"
+    SMTP_PORT: str = "2525"
+    SMTP_USERNAME: str = ""
+    SMTP_PASSWORD: str = ""
+    TLS_ENABLED: bool = False
+    
+    #Frontend Domain
+    FRONTEND_DOMAIN: str = "http://localhost:8000"
+    
+    #Redis
+    REDIS_HOST: str = "localhost"
+    REDIS_PORT: int = 6379
+    REDIS_DB: int = 0
 
 
 settings = Settings()

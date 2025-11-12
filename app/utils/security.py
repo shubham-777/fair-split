@@ -57,6 +57,28 @@ def create_refresh_token(data: dict) -> str:
     encoded_jwt = jwt.encode(to_encode, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
     return encoded_jwt
 
+def create_reset_token(email: str):
+    expire = datetime.now(tz=timezone.utc) + timedelta(minutes=settings.RESET_TOKEN_EXPIRE_MINUTES)
+    payload = {"sub": email, "exp": expire}
+    token = jwt.encode(payload, settings.SECRET_KEY, algorithm=settings.ALGORITHM)
+    return token
+
+def decode_reset_token(token: str):
+    try:
+        payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM])
+        
+        if today_datetime() > datetime.fromtimestamp(payload['exp'], tz=timezone.utc):
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
+        
+        email = payload.get("sub")
+        if email is None:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
+        
+        return email
+    except jwt.ExpiredSignatureError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expired")
+    except jwt.InvalidTokenError:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token")
 
 def decode_token(token: str) -> Optional[dict]:
     """
@@ -85,7 +107,7 @@ ValidateRequest: TypeAlias = Annotated[dict, Depends(validate_request)]
 
 
 def get_current_user(payload: Annotated[dict, Depends(validate_request)], db: SessionDep) -> User:
-    user_email: str = payload.get("email")
+    user_email: str = payload.get("sub")
     
     if user_email is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid token: missing email", )
@@ -98,4 +120,4 @@ def get_current_user(payload: Annotated[dict, Depends(validate_request)], db: Se
     
     return user
 
-CurrentUser = Annotated[User, Depends(get_current_user)]
+CurrentUser: TypeAlias = Annotated[User, Depends(get_current_user)]

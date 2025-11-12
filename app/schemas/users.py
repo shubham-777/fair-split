@@ -26,6 +26,15 @@ class UserLogin(BaseModel):
 class UserUpdate(BaseModel):
     full_name: Optional[str] = Field(None, min_length=1, max_length=255)
     avatar_url: Optional[str] = None
+    
+    
+class ForgotPasswordRequest(BaseModel):
+    email: EmailStr
+
+    
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
 
 
 class ReadUser(UserBase):

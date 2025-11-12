@@ -14,7 +14,7 @@ class BaseGroup(BaseModel):
     user_id: int
     is_admin: bool = False
     
-class GroupMemberCreate(BaseModel):
+class CreateGroupMember(BaseModel):
     user_email: EmailStr
     is_admin: bool = False
     

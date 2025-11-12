@@ -7,8 +7,7 @@ from fastapi import APIRouter, status
 from fastapi.params import Depends
 
 from app.dependencies import SessionDep
-from app.schemas.group import CreateGroup, ReadGroup, ReadGroupWithMembersRelation, ReadGroupWithUserRelation, \
-    UpdateGroup
+from app.schemas.group import CreateGroup, ReadGroup, ReadGroupWithMembersRelation, UpdateGroup
 from app.services.group_service import GroupService
 from app.utils.security import get_current_user, validate_request, ValidateRequest
 

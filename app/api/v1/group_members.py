@@ -9,9 +9,9 @@ from starlette.status import HTTP_200_OK, HTTP_201_CREATED
 
 from app.dependencies import SessionDep
 from app.models.user import User
-from app.schemas.group_member import GroupMemberCreate, ReadGroupMember
+from app.schemas.group_member import CreateGroupMember, ReadGroupMember
 from app.services.group_member_service import GroupMemberService
-from app.utils.security import get_current_user, validate_request
+from app.utils.security import CurrentUser, get_current_user, validate_request
 
 router = APIRouter(prefix="/groups/{group_id}/members", tags=["Group Members"],
                    dependencies=[Depends(validate_request)])
@@ -27,11 +27,11 @@ def list_members(group_id: int, db: SessionDep, current_user: User = Depends(get
 
 
 @router.post("/", response_model=ReadGroupMember, status_code=HTTP_201_CREATED)
-def add_member(group_id: int, member_data: GroupMemberCreate, db: SessionDep,
-               current_user=Depends(get_current_user)):
+def add_member(group_id: int, member_data: CreateGroupMember, db: SessionDep,
+               current_user: CurrentUser):
     
-    with GroupMemberService(session=db, member_data=current_user) as service:
-        members = service.add_member(group_id)
+    with GroupMemberService(session=db, current_user=current_user.) as service:
+        members = service.add_member(group_id=group_id, data=member_data)
     return members
 
 

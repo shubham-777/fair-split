@@ -18,3 +18,4 @@ async def profile(db: SessionDep, payload: ValidateRequest):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="User not found")
   
     return current_user
+   

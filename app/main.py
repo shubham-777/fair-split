@@ -1,15 +1,12 @@
 """
 FairSplit FastAPI Application
 """
-from fastapi import Depends, FastAPI
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
+from app.api.v1 import auth, balances, groups, users  # , expenses
 from app.config import settings
 from app.database import Base, engine
-from app.api.v1 import auth, users
-from app.api.v1 import auth, groups #, expenses
-from app.api.v1 import balances
 
 # Create database tables
 Base.metadata.create_all(bind=engine)
