@@ -3,7 +3,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel, EmailStr, Field, field_serializer
+from pydantic import BaseModel, Field, field_serializer
 
 from app.schemas.group_member import ReadGroupMember
 from app.schemas.users import ReadUser

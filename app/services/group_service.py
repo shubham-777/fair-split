@@ -16,6 +16,12 @@ class GroupService(BaseService):
     def get_by_id(self, _id: int) -> type[Group] | None:
         return self.session.get(Group, _id)
     
+    def validate_and_get_by_id(self, _id: int) -> type[Group]:
+        group = self.get_by_id(_id=_id)
+        if not group:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Group not found")
+        return group
+    
     def create(self, data: CreateGroup) -> Group:
         group = Group(name=data.name, description=data.description, creator_id=self.user.id)
         group = self.add_and_commit(group)

@@ -12,7 +12,7 @@ class Group(Base):
     description = Column(String(500), nullable=True)
     creator_id = Column(Integer, ForeignKey("users.id"), nullable=False)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
-    updated_at = Column(DateTime(timezone=True), onupdate=func.now())
+    updated_at = Column(DateTime(timezone=True), server_onupdate=func.now())
 
     # Relationships
     creator = relationship("User", back_populates="created_groups", foreign_keys=[creator_id])

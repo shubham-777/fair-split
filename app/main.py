@@ -4,7 +4,7 @@ FairSplit FastAPI Application
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from app.api.v1 import auth, balances, groups, users  # , expenses
+from app.api.v1 import auth, balances, expense, group, users, group_members  # , expenses
 from app.config import settings
 from app.database import Base, engine
 
@@ -44,7 +44,8 @@ async def health_check():
 app.include_router(auth.router, prefix="/api/v1")
 app.include_router(users.router, prefix="/api/v1")
 app.include_router(groups.router, prefix="/api/v1")
-# app.include_router(expenses.router, prefix="/api/v1")
+app.include_router(group_members.router, prefix="/api/v1")
+app.include_router(expense.router, prefix="/api/v1")
 app.include_router(balances.router, prefix="/api/v1")
 
 

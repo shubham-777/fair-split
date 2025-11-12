@@ -37,9 +37,15 @@ class ResetPasswordRequest(BaseModel):
     new_password: str
 
 
-class ReadUser(UserBase):
-    id: int
+class ReadUserMin(UserBase):
     avatar_url: Optional[str]
+    
+    class Config:
+        from_attributes = True
+
+
+class ReadUser(ReadUserMin):
+    id: int
     is_active: bool
     is_verified: bool
     created_at: datetime = Field(..., example="2025-10-20 09:30:00",

@@ -2,7 +2,7 @@ from datetime import datetime
 
 from pydantic import BaseModel, EmailStr, Field, field_serializer
 
-from app.schemas.users import ReadUser
+from app.schemas.users import ReadUserMin
 from app.utils.constants import COMMON_DATE_TIME_FORMAT
 
 
@@ -37,7 +37,7 @@ class ReadGroupMember(BaseModel):
     is_admin: bool = False
     joined_at: datetime = Field(..., example="2025-10-20 09:30:00",
                                 description=f"Datetime in format {COMMON_DATE_TIME_FORMAT}")
-    user: ReadUser
+    user: ReadUserMin
     
     @field_serializer("joined_at")
     def serialize_created_at(self, dt: datetime, _info):
